@@ -106,6 +106,26 @@ func (store *Store)AcceptDebtTransaction(ctx context.Context, arg TxParams ) (Tx
 		if updateRecieverBalErr!=nil{
 			return updateRecieverBalErr
 		}
+
+		// Transactions is Stored
+		var resErr error
+		result.Transaction,resErr=q.GetTranaction(ctx,arg.TransactionId)
+
+		if resErr != nil{
+			return resErr
+		}
+
+		result.FromAccount,resErr = q.GetAccount(ctx,senderAccount.ID)
+
+		if resErr != nil {
+			return resErr
+		}
+
+		result.ToAccount,resErr = q.GetAccount(ctx,recieverAccount.ID)
+
+		if resErr !=nil {
+			return resErr
+		}
 	
 		return nil
 	})
@@ -181,11 +201,31 @@ func (store *Store)AcceptPayTransaction(ctx context.Context, arg TxAcceptParams 
 		updateTransErr:=q.UpdateTransactionAmount(ctx,UpdateTransactionAmountParams{
 			Amount: transaction.Amount - arg.PayingAmount,
 		})
-	
+
 		if updateTransErr!=nil{
 			return updateTransErr
 		}
-		
+
+		// Transactions is Stored
+		var resErr error
+		result.Transaction,resErr=q.GetTranaction(ctx,arg.TransactionId)
+
+		if resErr != nil{
+			return resErr
+		}
+
+		result.FromAccount,resErr = q.GetAccount(ctx,senderAccount.ID)
+
+		if resErr != nil {
+			return resErr
+		}
+
+		result.ToAccount,resErr = q.GetAccount(ctx,recieverAccount.ID)
+
+		if resErr !=nil {
+			return resErr
+		}
+
 		return nil
 	})
 
