@@ -92,7 +92,7 @@ func (store *Store)AcceptDebtTransaction(ctx context.Context, arg TxParams ) (Tx
 		}
 
 		//reciever_account balance -> account balance - transaction amount
-		recieverAccount,recieverAccountErr:=q.GetAccount(ctx,transaction.SenderID)
+		recieverAccount,recieverAccountErr:=q.GetAccount(ctx,transaction.RecieverID)
 
 		if recieverAccountErr!=nil{
 			return recieverAccountErr
@@ -172,6 +172,7 @@ func (store *Store)AcceptPayTransaction(ctx context.Context, arg TxAcceptParams 
 			return senderAccountErr
 		}
 
+		fmt.Println(senderAccount.Balance)
 		updateSenderBalErr:=q.UpdateAccountBalance(ctx,UpdateAccountBalanceParams{
 			ID: senderAccount.ID,
 			Balance: senderAccount.Balance - arg.PayingAmount,
@@ -182,12 +183,13 @@ func (store *Store)AcceptPayTransaction(ctx context.Context, arg TxAcceptParams 
 		}
 
 		//reciever_account balance -> account balance - transaction amount
-		recieverAccount,recieverAccountErr:=q.GetAccount(ctx,transaction.SenderID)
+		recieverAccount,recieverAccountErr:=q.GetAccount(ctx,transaction.RecieverID)
 
 		if recieverAccountErr!=nil{
 			return recieverAccountErr
 		}
 
+		fmt.Println(recieverAccount.Balance)
 		updateRecieverBalErr:=q.UpdateAccountBalance(ctx,UpdateAccountBalanceParams{
 			ID: recieverAccount.ID,
 			Balance: recieverAccount.Balance + arg.PayingAmount,

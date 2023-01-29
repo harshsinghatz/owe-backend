@@ -11,8 +11,8 @@ import (
 )
 
 const createTransaction = `-- name: CreateTransaction :one
-INSERT INTO Transaction (reciever_id, sender_id, currency, amount, message, deadline, status)
-VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, reciever_id, sender_id, amount, status, type, currency, message, deadline, created_at
+INSERT INTO Transaction (reciever_id, sender_id, currency, amount, message, deadline, status,type)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id, reciever_id, sender_id, amount, status, type, currency, message, deadline, created_at
 `
 
 type CreateTransactionParams struct {
@@ -23,6 +23,7 @@ type CreateTransactionParams struct {
 	Message    sql.NullString
 	Deadline   sql.NullTime
 	Status     string
+	Type       string
 }
 
 func (q *Queries) CreateTransaction(ctx context.Context, arg CreateTransactionParams) (Transaction, error) {
@@ -34,6 +35,7 @@ func (q *Queries) CreateTransaction(ctx context.Context, arg CreateTransactionPa
 		arg.Message,
 		arg.Deadline,
 		arg.Status,
+		arg.Type,
 	)
 	var i Transaction
 	err := row.Scan(
@@ -283,5 +285,19 @@ type UpdateTransactionStatusParams struct {
 
 func (q *Queries) UpdateTransactionStatus(ctx context.Context, arg UpdateTransactionStatusParams) error {
 	_, err := q.db.ExecContext(ctx, updateTransactionStatus, arg.ID, arg.Status)
+	return err
+}
+
+const updateTransactionType = `-- name: UpdateTransactionType :exec
+UPDATE Transaction SET type = $2 WHERE id = $1
+`
+
+type UpdateTransactionTypeParams struct {
+	ID   int64
+	Type string
+}
+
+func (q *Queries) UpdateTransactionType(ctx context.Context, arg UpdateTransactionTypeParams) error {
+	_, err := q.db.ExecContext(ctx, updateTransactionType, arg.ID, arg.Type)
 	return err
 }
