@@ -1,14 +1,23 @@
 -- name: CreateTransaction :one
-INSERT INTO Transaction (reciever_id, sender_id, currency, amount, message, deadline)
-VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;
+INSERT INTO Transaction (reciever_id, sender_id, currency, amount, message, deadline, status)
+VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *;
 
--- name: GiveAmountTransactions :many
-SELECT * FROM Transaction WHERE reciever_id = $1 LIMIT 1;
+-- name: GetAllDebtTransactions :many
+SELECT * FROM Transaction WHERE reciever_id = $1 AND status = "accepted";
 
--- name: GetAmountTransactions :many
-SELECT * FROM Transaction WHERE id = $1 LIMIT 1;
+-- name: GetAllDebtFromAccountId :many
+SELECT * FROM Transaction WHERE reciever_id = $1 AND sender_id=$2 AND status = "accepted";
 
--- name: UpdateTranactionAmount :exec
+-- name: GetAllLendTransactions :many
+SELECT * FROM Transaction WHERE sender_id = $1 AND status = "accepted";
+
+-- name: GetAllLendFromAccountId :many
+SELECT * FROM Transaction WHERE sender_id = $1 AND reciever_id=$2 AND status = "accepted";
+
+-- name: UpdateTransactionStatus :exec
+UPDATE Transaction SET status = $2 WHERE id = $1;
+
+-- name: UpdateTransactionAmount :exec
 UPDATE Transaction SET amount = $2 WHERE id = $1;
 
 -- name: UpdateDeadline :exec

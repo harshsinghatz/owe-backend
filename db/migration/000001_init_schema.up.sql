@@ -1,17 +1,18 @@
 CREATE TABLE "accounts" (
-  "id" bigserial PRIMARY KEY,
-  "balance" bigint NOT NULL DEFAULT 0,
+  "id" BIGSERIAL PRIMARY KEY,
   "name" varchar NOT NULL,
+  "balance" bigint NOT NULL DEFAULT 0,
   "phone_number" varchar NOT NULL,
   "currency" varchar NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "transaction" (
-  "id" bigserial PRIMARY KEY,
+  "id" BIGSERIAL PRIMARY KEY,
   "reciever_id" bigint NOT NULL,
   "sender_id" bigint NOT NULL,
   "amount" bigint NOT NULL,
+  "status" varchar NOT NULL DEFAULT 'pending',
   "currency" varchar NOT NULL,
   "message" varchar,
   "deadline" timestamptz,

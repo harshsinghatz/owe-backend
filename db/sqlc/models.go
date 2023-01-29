@@ -11,8 +11,8 @@ import (
 
 type Account struct {
 	ID          int64
-	Balance     int64
 	Name        string
+	Balance     int64
 	PhoneNumber string
 	Currency    string
 	CreatedAt   time.Time
@@ -23,6 +23,7 @@ type Transaction struct {
 	RecieverID int64
 	SenderID   int64
 	Amount     int64
+	Status     string
 	Currency   string
 	Message    sql.NullString
 	Deadline   sql.NullTime

@@ -39,8 +39,12 @@ func (store *Store) execTx(ctx context.Context,fn func(*Queries)error)error{
 	return tx.Commit()
 }
 
+
+
 // Create a transaction
-// 1. 
-func (store *Store)TransferTx() error{
+// 1. Create a transaction from the sender to the reciever  
+// 2. Sender balance ++
+// 3. Reciever balance --
+func (store *Store)RequestTx(ctx context.Context, arg ) error{
 	
 }

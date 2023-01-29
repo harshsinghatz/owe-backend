@@ -14,7 +14,7 @@ INSERT INTO Accounts (
   name, phone_number,currency,balance
 ) VALUES (
   $1, $2, $3, $4
-) RETURNING id, balance, name, phone_number, currency, created_at
+) RETURNING id, name, balance, phone_number, currency, created_at
 `
 
 type CreateAccountParams struct {
@@ -34,8 +34,8 @@ func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (A
 	var i Account
 	err := row.Scan(
 		&i.ID,
-		&i.Balance,
 		&i.Name,
+		&i.Balance,
 		&i.PhoneNumber,
 		&i.Currency,
 		&i.CreatedAt,
@@ -44,7 +44,7 @@ func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (A
 }
 
 const getAccount = `-- name: GetAccount :one
-SELECT id, balance, name, phone_number, currency, created_at FROM Accounts 
+SELECT id, name, balance, phone_number, currency, created_at FROM Accounts 
 WHERE id = $1 LIMIT 1
 `
 
@@ -53,8 +53,8 @@ func (q *Queries) GetAccount(ctx context.Context, id int64) (Account, error) {
 	var i Account
 	err := row.Scan(
 		&i.ID,
-		&i.Balance,
 		&i.Name,
+		&i.Balance,
 		&i.PhoneNumber,
 		&i.Currency,
 		&i.CreatedAt,
