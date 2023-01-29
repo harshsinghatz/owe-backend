@@ -12,7 +12,7 @@ import (
 
 const createTransaction = `-- name: CreateTransaction :one
 INSERT INTO Transaction (reciever_id, sender_id, currency, amount, message, deadline, status)
-VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, reciever_id, sender_id, amount, status, currency, message, deadline, created_at
+VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, reciever_id, sender_id, amount, status, type, currency, message, deadline, created_at
 `
 
 type CreateTransactionParams struct {
@@ -42,6 +42,7 @@ func (q *Queries) CreateTransaction(ctx context.Context, arg CreateTransactionPa
 		&i.SenderID,
 		&i.Amount,
 		&i.Status,
+		&i.Type,
 		&i.Currency,
 		&i.Message,
 		&i.Deadline,
@@ -60,7 +61,7 @@ func (q *Queries) DeleteTransaction(ctx context.Context, id int64) error {
 }
 
 const getAllDebtFromAccountId = `-- name: GetAllDebtFromAccountId :many
-SELECT id, reciever_id, sender_id, amount, status, currency, message, deadline, created_at FROM Transaction WHERE reciever_id = $1 AND sender_id=$2 AND status = "accepted"
+SELECT id, reciever_id, sender_id, amount, status, type, currency, message, deadline, created_at FROM Transaction WHERE reciever_id = $1 AND sender_id=$2 AND status = "accepted"
 `
 
 type GetAllDebtFromAccountIdParams struct {
@@ -83,6 +84,7 @@ func (q *Queries) GetAllDebtFromAccountId(ctx context.Context, arg GetAllDebtFro
 			&i.SenderID,
 			&i.Amount,
 			&i.Status,
+			&i.Type,
 			&i.Currency,
 			&i.Message,
 			&i.Deadline,
@@ -102,7 +104,7 @@ func (q *Queries) GetAllDebtFromAccountId(ctx context.Context, arg GetAllDebtFro
 }
 
 const getAllDebtTransactions = `-- name: GetAllDebtTransactions :many
-SELECT id, reciever_id, sender_id, amount, status, currency, message, deadline, created_at FROM Transaction WHERE reciever_id = $1 AND status = "accepted"
+SELECT id, reciever_id, sender_id, amount, status, type, currency, message, deadline, created_at FROM Transaction WHERE reciever_id = $1 AND status = "accepted"
 `
 
 func (q *Queries) GetAllDebtTransactions(ctx context.Context, recieverID int64) ([]Transaction, error) {
@@ -120,6 +122,7 @@ func (q *Queries) GetAllDebtTransactions(ctx context.Context, recieverID int64) 
 			&i.SenderID,
 			&i.Amount,
 			&i.Status,
+			&i.Type,
 			&i.Currency,
 			&i.Message,
 			&i.Deadline,
@@ -139,7 +142,7 @@ func (q *Queries) GetAllDebtTransactions(ctx context.Context, recieverID int64) 
 }
 
 const getAllLendFromAccountId = `-- name: GetAllLendFromAccountId :many
-SELECT id, reciever_id, sender_id, amount, status, currency, message, deadline, created_at FROM Transaction WHERE sender_id = $1 AND reciever_id=$2 AND status = "accepted"
+SELECT id, reciever_id, sender_id, amount, status, type, currency, message, deadline, created_at FROM Transaction WHERE sender_id = $1 AND reciever_id=$2 AND status = "accepted"
 `
 
 type GetAllLendFromAccountIdParams struct {
@@ -162,6 +165,7 @@ func (q *Queries) GetAllLendFromAccountId(ctx context.Context, arg GetAllLendFro
 			&i.SenderID,
 			&i.Amount,
 			&i.Status,
+			&i.Type,
 			&i.Currency,
 			&i.Message,
 			&i.Deadline,
@@ -181,7 +185,7 @@ func (q *Queries) GetAllLendFromAccountId(ctx context.Context, arg GetAllLendFro
 }
 
 const getAllLendTransactions = `-- name: GetAllLendTransactions :many
-SELECT id, reciever_id, sender_id, amount, status, currency, message, deadline, created_at FROM Transaction WHERE sender_id = $1 AND status = "accepted"
+SELECT id, reciever_id, sender_id, amount, status, type, currency, message, deadline, created_at FROM Transaction WHERE sender_id = $1 AND status = "accepted"
 `
 
 func (q *Queries) GetAllLendTransactions(ctx context.Context, senderID int64) ([]Transaction, error) {
@@ -199,6 +203,7 @@ func (q *Queries) GetAllLendTransactions(ctx context.Context, senderID int64) ([
 			&i.SenderID,
 			&i.Amount,
 			&i.Status,
+			&i.Type,
 			&i.Currency,
 			&i.Message,
 			&i.Deadline,
@@ -215,6 +220,28 @@ func (q *Queries) GetAllLendTransactions(ctx context.Context, senderID int64) ([
 		return nil, err
 	}
 	return items, nil
+}
+
+const getTranaction = `-- name: GetTranaction :one
+SELECT id, reciever_id, sender_id, amount, status, type, currency, message, deadline, created_at FROM Transaction WHERE id = $1
+`
+
+func (q *Queries) GetTranaction(ctx context.Context, id int64) (Transaction, error) {
+	row := q.db.QueryRowContext(ctx, getTranaction, id)
+	var i Transaction
+	err := row.Scan(
+		&i.ID,
+		&i.RecieverID,
+		&i.SenderID,
+		&i.Amount,
+		&i.Status,
+		&i.Type,
+		&i.Currency,
+		&i.Message,
+		&i.Deadline,
+		&i.CreatedAt,
+	)
+	return i, err
 }
 
 const updateDeadline = `-- name: UpdateDeadline :exec

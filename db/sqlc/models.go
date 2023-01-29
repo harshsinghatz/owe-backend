@@ -24,6 +24,7 @@ type Transaction struct {
 	SenderID   int64
 	Amount     int64
 	Status     string
+	Type       string
 	Currency   string
 	Message    sql.NullString
 	Deadline   sql.NullTime

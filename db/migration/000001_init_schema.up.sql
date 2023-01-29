@@ -13,6 +13,7 @@ CREATE TABLE "transaction" (
   "sender_id" bigint NOT NULL,
   "amount" bigint NOT NULL,
   "status" varchar NOT NULL DEFAULT 'pending',
+  "type" varchar NOT NULL,
   "currency" varchar NOT NULL,
   "message" varchar,
   "deadline" timestamptz,

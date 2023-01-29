@@ -2,6 +2,9 @@
 INSERT INTO Transaction (reciever_id, sender_id, currency, amount, message, deadline, status)
 VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *;
 
+-- name: GetTranaction :one
+SELECT * FROM Transaction WHERE id = $1;
+
 -- name: GetAllDebtTransactions :many
 SELECT * FROM Transaction WHERE reciever_id = $1 AND status = "accepted";
 
