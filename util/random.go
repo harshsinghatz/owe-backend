@@ -31,9 +31,9 @@ func RandomName()string{
 	return RandonString(8)
 }
 
-func RandomPhoneNumber()string{
-	return string(RandonInt(1000000,2000000))
-}
+// func RandomPhoneNumber()string{
+// 	return string(RandonInt(1000000,2000000))
+// }
 
 func RandomCurrency()string{
 	currencies:=[]string{"EUR","USD","CAD"}
