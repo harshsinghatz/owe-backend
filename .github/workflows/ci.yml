@@ -13,7 +13,7 @@ jobs:
         image: postgres:12
         env:
           POSTGRES_USER: root
-          POSTGRES_PASSWORD: pass
+          POSTGRES_PASSWORD: harsh
           POSTGRES_DB: owe
         options: >-
           --health-cmd pg_isready
